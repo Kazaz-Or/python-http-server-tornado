@@ -1,7 +1,7 @@
 import tornado.web
 import tornado.ioloop
 
-PORT = 8881
+PORT = 8080
 
 
 class basicRequestHandler(tornado.web.RequestHandler):
@@ -26,12 +26,27 @@ class resourceRequestHandler(tornado.web.RequestHandler):
         self.write(f"Querying tweet with id {id}")
 
 
+class uploadHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render("index.html")
+
+    def post(self):
+        files = self.request.files["imgFile"]
+        for file in files:
+            file_handler = open(f"img/{file.filename}", "wb")
+            file_handler.write(file.body)
+            file_handler.close()
+        self.write(f"http://localhost:8080/img/{file.filename}")
+
+
 if __name__ == "__main__":
     app = tornado.web.Application([
         (r"/", basicRequestHandler),
         (r"/blog", staticRequestHandler),
         (r"/isEven", queryStringRequestHandler),
-        (r"/tweet/([0-9]+)", resourceRequestHandler)
+        (r"/tweet/([0-9]+)", resourceRequestHandler),
+        (r"/upload", uploadHandler),
+        (r"/img/(.*)", tornado.web.StaticFileHandler, {"path": "img"})
     ])
 
     app.listen(PORT)
