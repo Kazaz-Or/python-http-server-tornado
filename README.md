@@ -49,3 +49,6 @@ localhost:8000/front
         (r"/img/(.*)", tornado.web.StaticFileHandler, {"path": "img"}),
         (r"/list", listRequestHandler)
 ```
+
+![en-cok-kullanilan-python-frameworkler-06](https://user-images.githubusercontent.com/83350680/179785420-591992df-204d-4307-9186-b87a4bb34419.jpeg)
+
