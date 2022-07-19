@@ -4,14 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>EXAMPLE OF PYTHON HTTP SERVER USING TORNADO</title>
+    <title>Fruits API</title>
 </head>
 <body>
-    <h1>EXAMPLE OF PYTHON HTTP SERVER USING TORNADO</h1>
+    <label>Fruits</label>
+    <select id = 'lstFruit'></select>
+    <label>Add new fruit</label><input type = 'text' id = 'txtFruit'><button id = 'btnAdd'>Add Fruit</button>
+
+    <script>
+
+        const lstFruit = document.getElementById("lstFruit")
+        const addFruit = document.getElementById("btnAdd")
+        const txtFruit = document.getElementById("txtFruit")
+       
+        fetch("http://localhost:8000/list")
+        .then(response => response.json())
+        .then(jsonResponse => jsonResponse.forEach(fruit => {
+
+            let o = document.createElement("option")
+            o.textContent = fruit
+            lstFruit.appendChild(o)
+
+        }))
+
+
+        addFruit.addEventListener("click", e => {
+                let fruit = txtFruit.value;
+                fetch(`http://localhost:8000/list?fruit=${fruit}`, {"method" : "POST"})
+                .then(response => response.json())
+                .then(jsonResponse => alert(jsonResponse.message))
+
+        })
+
+    </script>
+
     <form method = "post" action = "/upload" enctype="multipart/form-data" accept-charset="">
-    <input type = 'file' name = 'imgFile' accept=".jpg,.png">
+    <input type = 'file' name = 'imgFile' accept=".jpg, .png">
     <input type = 'submit' value="upload">
 
-</form>
 </body>
 </html>

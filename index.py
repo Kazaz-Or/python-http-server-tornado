@@ -1,7 +1,8 @@
+import json
 import tornado.web
 import tornado.ioloop
 
-PORT = 8080
+PORT = 8000
 
 
 class basicRequestHandler(tornado.web.RequestHandler):
@@ -37,16 +38,32 @@ class uploadHandler(tornado.web.RequestHandler):
             file_handler.write(file.body)
             file_handler.close()
         self.write(f"http://localhost:8080/img/{file.filename}")
+        
+
+class listRequestHandler(tornado.web.RequestHandler):
+    def get(self):
+        fh = open("list.txt", "r")
+        fruits = fh.read().splitlines()
+        fh.close()
+        self.write(json.dumps(fruits))
+        
+    def post(self):
+        fruit = self.get_argument("fruit")
+        fh = open("list.txt", "a")
+        fh.write(f"{fruit}\n")
+        fh.close()
+        self.write(json.dumps({"message": "Fruit added successfully"}))
 
 
 if __name__ == "__main__":
     app = tornado.web.Application([
         (r"/", basicRequestHandler),
-        (r"/blog", staticRequestHandler),
+        (r"/front", staticRequestHandler),
         (r"/isEven", queryStringRequestHandler),
         (r"/tweet/([0-9]+)", resourceRequestHandler),
         (r"/upload", uploadHandler),
-        (r"/img/(.*)", tornado.web.StaticFileHandler, {"path": "img"})
+        (r"/img/(.*)", tornado.web.StaticFileHandler, {"path": "img"}),
+        (r"/list", listRequestHandler)
     ])
 
     app.listen(PORT)
